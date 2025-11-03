@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import Hero from './components/Hero.jsx';
 import Header from './components/Header.jsx';
-import Filters, { RENT_OPTIONS } from './components/Filters.jsx';
+import Filters from './components/Filters.jsx';
 import ResultsTable from './components/ResultsTable.jsx';
 import Message from './components/Message.jsx';
 import * as XLSX from 'xlsx';
@@ -58,44 +59,53 @@ function App() {
   const handleReset = () => setFilters({ college: '', rent: '' });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <Header />
+    <div className="min-h-screen bg-slate-50">
+      <Hero />
 
-      <main className="max-w-5xl mx-auto px-4 pb-16 space-y-6">
-        <Filters
-          colleges={COLLEGES}
-          values={filters}
-          onChange={setFilters}
-          onReset={handleReset}
-          disabled={loading}
-        />
+      <div className="-mt-12 md:-mt-16" />
 
-        {error && (
-          <Message
-            variant="warning"
-            title="Data file not found"
-            description={error}
+      <div className="relative">
+        {/* Decorative gradient stripe */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-8 h-16 bg-gradient-to-b from-black/20 to-transparent" />
+
+        <Header />
+
+        <main className="max-w-5xl mx-auto px-4 pb-20 space-y-6">
+          <Filters
+            colleges={COLLEGES}
+            values={filters}
+            onChange={setFilters}
+            onReset={handleReset}
+            disabled={loading}
           />
-        )}
 
-        {!loading && filtered.length === 0 && (filters.college === '' && filters.rent === '') && (
-          <Message
-            variant="info"
-            title="Please use filters to search for stays."
-            description="Select a college and/or a rent range to see matching results."
-          />
-        )}
+          {error && (
+            <Message
+              variant="warning"
+              title="Data file not found"
+              description={error}
+            />
+          )}
 
-        {!loading && filtered.length === 0 && (filters.college !== '' || filters.rent !== '') && (
-          <Message
-            variant="error"
-            title="No results found"
-            description="Try adjusting your filters to find matching stays."
-          />
-        )}
+          {!loading && filtered.length === 0 && (filters.college === '' && filters.rent === '') && (
+            <Message
+              variant="info"
+              title="Please use filters to search for stays."
+              description="Select a college and/or a rent range to see matching results."
+            />
+          )}
 
-        <ResultsTable rows={filtered} />
-      </main>
+          {!loading && filtered.length === 0 && (filters.college !== '' || filters.rent !== '') && (
+            <Message
+              variant="error"
+              title="No results found"
+              description="Try adjusting your filters to find matching stays."
+            />
+          )}
+
+          <ResultsTable rows={filtered} />
+        </main>
+      </div>
     </div>
   );
 }
@@ -116,7 +126,7 @@ function toNumber(v) {
   if (v == null || v === '') return null;
   if (typeof v === 'number') return v;
   if (typeof v === 'string') {
-    const cleaned = v.toLowerCase().replace(/[,\s]/g, '');
+    const cleaned = v.toLowerCase().replace(/[\,\s]/g, '');
     if (cleaned.endsWith('k')) {
       const base = parseFloat(cleaned.replace('k', ''));
       return isNaN(base) ? null : base * 1000;
